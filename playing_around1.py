@@ -67,4 +67,8 @@ qobj = assemble(qc5)
 results = sim.run(qobj).result().get_counts()
 plot_histogram(results)
 
+
+coords = [pi/2,0,1] # [Theta, Phi, Radius]
+plot_bloch_vector(coords, coord_type='spherical') # Bloch Vector with spherical coordinates
+
 plt.show()
