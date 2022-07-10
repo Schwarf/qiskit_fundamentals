@@ -14,14 +14,14 @@ qobj_original = assemble(qc_original)
 state = sim.run(qobj_original).result().get_statevector()
 plot_bloch_multivector(state, title="original")
 
-qc_y = QuantumCircuit(1)
-qc_y.y(0)
-qc_y.draw()
+qc_z = QuantumCircuit(1)
+qc_z.z(0)
+qc_z.draw(output='mpl', filename="Z_gate_applied_to_0.png")
 
-qc_y.save_statevector()
-qobj_y = assemble(qc_y)
-state = sim.run(qobj_y).result().get_statevector()
-plot_bloch_multivector(state, title="Y gate applied")
+qc_z.save_statevector()
+qobj_z = assemble(qc_z)
+state = sim.run(qobj_z).result().get_statevector()
+plot_bloch_multivector(state, title="Z gate applied")
 plt.show()
 ## Note the bloch sphere only shows the relative shares of the two base vectors |0>, |1> phases like -1, i, -i are
 ## not depicted
