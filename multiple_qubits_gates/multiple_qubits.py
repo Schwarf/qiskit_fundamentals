@@ -1,7 +1,5 @@
 from matplotlib import pyplot as plt
 from qiskit import QuantumCircuit, Aer, assemble
-import numpy as np
-from qiskit.visualization import plot_histogram, plot_bloch_multivector
 
 # Three qubits
 qc = QuantumCircuit(3)
