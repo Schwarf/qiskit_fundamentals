@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 from qiskit import QuantumCircuit, Aer, assemble
-import numpy as np
-from qiskit.visualization import plot_histogram, plot_bloch_multivector
+from qiskit.visualization import plot_histogram, plot_bloch_multivector, plot_state_qsphere
 
 qc = QuantumCircuit(2)
 # cnot gate. first index is control qubit, second one is target qubit
@@ -13,11 +12,11 @@ qobj = assemble(qc)
 cnot_gate = svsim.run(qobj).result().get_unitary()
 print(cnot_gate)
 
-
 # Apply cnot to superposition to get entangled state
 # NOTE in bra-ket notation the rightmost qubit is the first qubit !!!
 qc = QuantumCircuit(2)
 first_qubit = 0
+
 qc.h(first_qubit)
 qc.draw()
 # svsim = Aer.get_backend('aer_simulator')
@@ -37,7 +36,11 @@ final_state = svsim.run(qobj).result().get_statevector()
 # Productstate is entangled state: First Bell state
 print(final_state)
 plot_histogram(result.get_counts())
-
+# Because of the entanglement of this state, there is no single qubit measurement basis for which a specific measurement
+# is guaranteed
+plot_bloch_multivector(final_state)
+plot_state_qsphere(final_state)
 qc.draw()
+
 
 plt.show()
