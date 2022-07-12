@@ -27,7 +27,7 @@ qc.draw()
 # print(final_state)
 
 # Apply C-not gate
-qc.cx(0,1)
+qc.cx(0, 1)
 svsim = Aer.get_backend('aer_simulator')
 qc.save_statevector()
 qobj = assemble(qc)
@@ -41,6 +41,5 @@ plot_histogram(result.get_counts())
 plot_bloch_multivector(final_state)
 plot_state_qsphere(final_state)
 qc.draw()
-
 
 plt.show()

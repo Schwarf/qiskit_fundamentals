@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 from qiskit import QuantumCircuit, Aer, assemble
 from qiskit.visualization import plot_histogram, plot_bloch_multivector, plot_state_qsphere
 
+
 def get_first_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCircuit:
     quantum_circuit = QuantumCircuit(2)
     quantum_circuit.h(first_qubit)
@@ -10,6 +11,7 @@ def get_first_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCir
         quantum_circuit.draw()
     return quantum_circuit
 
+
 def get_second_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCircuit:
     quantum_circuit = get_first_bell_state(first_qubit)
     quantum_circuit.z(first_qubit)
@@ -17,12 +19,14 @@ def get_second_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCi
         quantum_circuit.draw()
     return quantum_circuit
 
+
 def get_third_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCircuit:
     quantum_circuit = get_first_bell_state(first_qubit)
     quantum_circuit.x(first_qubit)
     if draw:
         quantum_circuit.draw()
     return quantum_circuit
+
 
 def get_fourth_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCircuit:
     quantum_circuit = get_first_bell_state(first_qubit)
@@ -32,6 +36,7 @@ def get_fourth_bell_state(first_qubit: int = 0, draw: bool = False) -> QuantumCi
         quantum_circuit.draw()
     return quantum_circuit
 
+
 def run_simulator(qc: QuantumCircuit) -> None:
     svsim = Aer.get_backend('aer_simulator')
     qc.save_statevector()
@@ -40,11 +45,11 @@ def run_simulator(qc: QuantumCircuit) -> None:
     final_state = svsim.run(qobj).result().get_statevector()
     plot_state_qsphere(final_state)
 
+
 qc_first = get_first_bell_state()
 qc_second = get_second_bell_state()
 qc_third = get_third_bell_state()
 qc_fourth = get_fourth_bell_state()
-
 
 run_simulator(qc_first)
 run_simulator(qc_second)

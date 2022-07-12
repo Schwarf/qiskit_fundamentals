@@ -16,9 +16,8 @@ qobj = assemble(qc)
 final_state = svsim.run(qobj).result().get_statevector()
 print(final_state)
 
-
 # Circuit with two qubits
-qc =QuantumCircuit(2)
+qc = QuantumCircuit(2)
 # apply hadamard gate to first qubit
 qc.h(0)
 # apply x gate to second qubit
@@ -30,10 +29,9 @@ qobj = assemble(qc)
 final_state = svsim.run(qobj).result().get_statevector()
 print(final_state)
 
-
 # Print unitary trafo as result of kronecker-product oh H x X
 # Circuit with two qubits
-qc =QuantumCircuit(2)
+qc = QuantumCircuit(2)
 # apply hadamard gate to first qubit
 qc.h(0)
 # apply x gate to second qubit
@@ -44,7 +42,6 @@ qc.save_unitary()
 qobj = assemble(qc)
 unitary = svsim.run(qobj).result().get_unitary()
 print(unitary)
-
 
 # Print unitary trafo as result of XZH
 qc = QuantumCircuit(1)
@@ -58,7 +55,6 @@ qobj = assemble(qc)
 unitary = svsim.run(qobj).result().get_unitary()
 print(unitary)
 
-
 # Print unitary trafo as result of kronecker-product X x Z x H
 qc = QuantumCircuit(3)
 qc.h(0)
@@ -70,6 +66,5 @@ qc.save_unitary()
 qobj = assemble(qc)
 unitary = svsim.run(qobj).result().get_unitary()
 print(unitary)
-
 
 plt.show()

@@ -5,6 +5,7 @@ import numpy as np
 from qiskit.visualization import plot_bloch_multivector, plot_histogram, array_to_latex
 from qiskit.providers.aer.library import save_unitary
 
+
 # 1. Apply Hadarmard on 1st and 2nd qubit
 # 2. Apply CNot gate
 # 3. Apply Hadarmard on 1st and 2nd qubit after CNot
@@ -20,6 +21,7 @@ def cnot_switched_qubits() -> QuantumCircuit:
     quantum_cicuit.h(first_qubit)
     quantum_cicuit.h(second_qubit)
     return quantum_cicuit
+
 
 # CNOT-gate wrapped in H-gates
 # q0 ----H----------H---

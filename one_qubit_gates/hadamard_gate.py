@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from qiskit import QuantumCircuit, assemble, Aer
 from qiskit.visualization import plot_bloch_multivector
+
 sim = Aer.get_backend('aer_simulator')
 
 # Pauli gates
