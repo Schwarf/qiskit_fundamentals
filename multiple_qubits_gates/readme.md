@@ -19,7 +19,7 @@ they encode the integers 0,1,2 and 3, respectively.
   - controlled Z gate
 - controlled Hadamard gate
 - controleld rotation gates
-- controlled pahes gate
+- controlled phase gate aka S-gate
 - controlled u3 gate
 - swap gate
 
