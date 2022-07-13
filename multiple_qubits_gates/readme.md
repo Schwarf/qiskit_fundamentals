@@ -14,6 +14,9 @@ they encode the integers 0,1,2 and 3, respectively.
 
 # Two bit gates
 - controlled Pauli gates
+  - controlled X gate aka CNOT gate
+  - controlled Y gate
+  - controlled Z gate
 - controlled Hadamard gate
 - controleld rotation gates
 - controlled pahes gate
