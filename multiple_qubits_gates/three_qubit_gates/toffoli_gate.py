@@ -8,7 +8,7 @@ qubits = QuantumRegister(3)
 qc = QuantumCircuit(qubits)
 qc.ccx(qubits[0], qubits[1], qubits[2])
 qc.draw()
-
+    
 job = backend.run(transpile(qc, backend))
 result=job.result().get_unitary(qc, decimals=3)
 print(result)
