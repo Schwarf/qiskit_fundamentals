@@ -43,6 +43,8 @@ for qubit in range(len(b_str)):
 # Show oracle
 balanced_oracle.draw()
 
+# ALGORITHM STARTS HERE
+
 dj_circuit = QuantumCircuit(input_size+1, input_size)
 
 # Apply H-gates
@@ -54,7 +56,7 @@ dj_circuit.x(input_size)
 dj_circuit.h(input_size)
 
 # Add oracle
-dj_circuit += balanced_oracle
+dj_circuit += const_oracle
 
 # Repeat H-gates
 for qubit in range(input_size):
@@ -66,6 +68,13 @@ for i in range(input_size):
     dj_circuit.measure(i, i)
 
 dj_circuit.draw()
+
+aer_sim = Aer.get_backend('aer_simulator')
+qobj = assemble(dj_circuit, aer_sim)
+results = aer_sim.run(qobj).result()
+answer = results.get_counts()
+
+plot_histogram(answer)
 
 plt.show()
 
