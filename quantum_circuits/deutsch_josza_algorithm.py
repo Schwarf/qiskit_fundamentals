@@ -48,13 +48,13 @@ def construct_oracle(number_of_inputs: int, is_constant_oracle: bool = False) ->
     oracle_qc = QuantumCircuit(number_of_qubits)
 
     if is_constant_oracle:
-        qc_oracle = _constant_oracle(oracle_qc, number_of_inputs)
+        oracle_qc = _constant_oracle(oracle_qc, number_of_inputs)
     if not is_constant_oracle:
-        qc_oracle = _balanced_oracle(oracle_qc, number_of_inputs)
+        oracle_qc = _balanced_oracle(oracle_qc, number_of_inputs)
 
     # Create the gate
     oracle_gate = oracle_qc.to_gate()
-    oracle_gate.name = "Oracle"
+    oracle_gate.name = "Deutsch-Josza-Oracle"
     return oracle_gate
 
 
@@ -83,7 +83,7 @@ def deutsch_josza_circuit(oracle_gate: Gate, number_of_inputs: int) -> QuantumCi
 
 n = 4
 aer_sim = Aer.get_backend('aer_simulator')
-oracle_gate = construct_oracle(n)
+oracle_gate = construct_oracle(n, False)
 dj_circuit = deutsch_josza_circuit(oracle_gate, n)
 dj_circuit.draw()
 

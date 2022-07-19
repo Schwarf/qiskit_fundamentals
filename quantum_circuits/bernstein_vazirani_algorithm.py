@@ -10,10 +10,12 @@ def bernstein_vazirani_circuit(oracle_gate: Gate, number_of_inputs: int) -> Quan
     number_of_bits = number_of_inputs
     number_of_qubits = number_of_inputs + 1
     bv_circuit = QuantumCircuit(number_of_qubits, number_of_bits)
-    # all qubits initialize to |0> ... last one shall be initialized to |-> ...0-indexed
-    bv_circuit.z(number_of_inputs)
+    index_last_qubit = number_of_inputs
+    # all qubits initialize to |0> ... last one shall be initialized to |-> ...0-indexed: ZH|0> = |->
+    bv_circuit.h(index_last_qubit)
+    bv_circuit.z(index_last_qubit)
     # Apply Hadamard to all input-qubits and the last one
-    for qubit in range(number_of_qubits):
+    for qubit in range(number_of_inputs):
         bv_circuit.h(qubit)
     # Apply oracle function: Note this function is applied to all qubits, although is has only an effect on the last
     # qubit
@@ -27,3 +29,41 @@ def bernstein_vazirani_circuit(oracle_gate: Gate, number_of_inputs: int) -> Quan
         bv_circuit.measure(classic_bit, classic_bit)
 
     return bv_circuit
+
+
+def construct_oracle(hidden_string: str) -> Gate:
+    number_of_inputs = len(hidden_string)
+    number_of_outputs = 1
+    number_of_qubits = number_of_inputs + number_of_outputs
+    # revert string since qiskit is little-endian
+    hidden_string = hidden_string[::-1]
+    oracle_qc = QuantumCircuit(number_of_qubits)
+    for qubit in range(number_of_inputs):
+        if hidden_string[qubit] == '0':
+            oracle_qc.i(qubit)
+        else:
+            oracle_qc.cx(qubit, number_of_inputs)
+
+    oracle_gate = oracle_qc.to_gate()
+    oracle_gate.name = "Bernstein-Vazirani-Oracle"
+    return oracle_gate
+
+number_of_inputs = 5
+random_binary_string_number = np.random.randint(1, 2**number_of_inputs)
+random_binary_string = format(random_binary_string_number, '0'+str(number_of_inputs)+'b')
+
+oracle_gate = construct_oracle(hidden_string=random_binary_string)
+bv_circuit = bernstein_vazirani_circuit(oracle_gate=oracle_gate, number_of_inputs=number_of_inputs)
+
+aer_sim = Aer.get_backend('aer_simulator')
+transpiled_bv_circuit = transpile(bv_circuit, aer_sim)
+shots = 1024
+qobj = assemble(transpiled_bv_circuit)
+results = aer_sim.run(qobj).result()
+answer = results.get_counts()
+
+plot_histogram(answer)
+print(random_binary_string)
+plt.show()
+
+
