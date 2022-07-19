@@ -1,11 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from qiskit import IBMQ, Aer
-from qiskit.providers.ibmq import least_busy
+from qiskit import Aer
 from qiskit import QuantumCircuit, assemble, transpile
 from qiskit.circuit import Gate
 from qiskit.visualization import plot_histogram
-
 
 
 def _constant_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> QuantumCircuit:
@@ -16,6 +14,7 @@ def _constant_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> Quantu
         oracle_qc.x(number_of_inputs)
     return oracle_qc
 
+
 def _balanced_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> QuantumCircuit:
     # For a balanced oracle we use CNOT gates that take on one-inout qubit as control and target the output qubit
     # To randomize we randomly wrap (befor and after CNOT) input-qubits with X-gates.
@@ -24,7 +23,6 @@ def _balanced_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> Quantu
     # tells us the positions of the qubits that will be wrapped in X-gates
     random_binary_string_number = np.random.randint(1, 2 ** number_of_inputs)
     random_binary_string = format(random_binary_string_number, '0' + str(number_of_inputs) + 'b')
-
 
     # Now place first X-gates
     for qubit_position in range(len(random_binary_string)):
@@ -41,7 +39,8 @@ def _balanced_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> Quantu
 
     return oracle_qc
 
-def construct_oracle(number_of_inputs: int, is_constant_oracle: bool=False) -> Gate:
+
+def construct_oracle(number_of_inputs: int, is_constant_oracle: bool = False) -> Gate:
     # There is one output-qubit (the last one) which is either 1 or 0.
     number_of_outputs = 1
     number_of_qubits = number_of_inputs + number_of_outputs
@@ -57,6 +56,7 @@ def construct_oracle(number_of_inputs: int, is_constant_oracle: bool=False) -> G
     oracle_gate = oracle_qc.to_gate()
     oracle_gate.name = "Oracle"
     return oracle_gate
+
 
 def deutsch_josza_circuit(oracle_gate: Gate, number_of_inputs: int) -> QuantumCircuit:
     number_of_bits = number_of_inputs
@@ -94,5 +94,3 @@ answer = results.get_counts()
 plot_histogram(answer)
 
 plt.show()
-
-
