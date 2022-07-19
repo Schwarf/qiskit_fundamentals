@@ -19,11 +19,13 @@ def _constant_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> Quantu
 def _balanced_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> QuantumCircuit:
     # For a balanced oracle we use CNOT gates that take on one-inout qubit as control and target the output qubit
     # To randomize we randomly wrap (befor and after CNOT) input-qubits with X-gates.
-
+    target_qubit = number_of_inputs
     # Generate random number between 1 and 2**n-1 (n =number__of_inputs) ... the corresponding binary string
     # tells us the positions of the qubits that will be wrapped in X-gates
     random_binary_string_number = np.random.randint(1, 2 ** number_of_inputs)
     random_binary_string = format(random_binary_string_number, '0' + str(number_of_inputs) + 'b')
+
+
     # Now place first X-gates
     for qubit_position in range(len(random_binary_string)):
         if random_binary_string[qubit_position] == 1:
@@ -31,7 +33,7 @@ def _balanced_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> Quantu
 
     # Now we apply the CNOT gates to all qubits
     for qubit_position in range(number_of_inputs):
-        oracle_qc.cx(qubit_position)
+        oracle_qc.cx(qubit_position, target_qubit)
     # Now place the final X-gates
     for qubit_position in range(len(random_binary_string)):
         if random_binary_string[qubit_position] == 1:
@@ -39,7 +41,7 @@ def _balanced_oracle(oracle_qc: QuantumCircuit, number_of_inputs: int) -> Quantu
 
     return oracle_qc
 
-def construct_oracle(number_of_inputs: int, is_constant_oracle: False) -> Gate:
+def construct_oracle(number_of_inputs: int, is_constant_oracle: bool=False) -> Gate:
     # There is one output-qubit (the last one) which is either 1 or 0.
     number_of_outputs = 1
     number_of_qubits = number_of_inputs + number_of_outputs
@@ -74,77 +76,23 @@ def deutsch_josza_circuit(oracle_gate: Gate, number_of_inputs: int) -> QuantumCi
         dj_circuit.h(qubit)
 
     for classic_bit in range(number_of_bits):
-        dj_circuit.measure(classic_bit)
+        dj_circuit.measure(classic_bit, classic_bit)
 
     return dj_circuit
 
 
-
-
-input_size = 3
-const_oracle = QuantumCircuit(input_size + 1)
-
-output = np.random.randint(2)
-if output == 1:
-    const_oracle.x(input_size)
-const_oracle.draw()
-
-balanced_oracle = QuantumCircuit(input_size+1)
-b_str = "101"
-
-# Place X-gates
-for qubit in range(len(b_str)):
-    if b_str[qubit] == '1':
-        balanced_oracle.x(qubit)
-
-# Use barrier as divider
-balanced_oracle.barrier()
-
-# Controlled-NOT gates
-for qubit in range(input_size):
-    balanced_oracle.cx(qubit, input_size)
-
-balanced_oracle.barrier()
-# Place X-gates
-for qubit in range(len(b_str)):
-    if b_str[qubit] == '1':
-        balanced_oracle.x(qubit)
-
-# Show oracle
-balanced_oracle.draw()
-
-# ALGORITHM STARTS HERE
-
-dj_circuit = QuantumCircuit(input_size+1, input_size)
-
-# Apply H-gates
-for qubit in range(input_size):
-    dj_circuit.h(qubit)
-
-# Put qubit in state |->
-dj_circuit.x(input_size)
-dj_circuit.h(input_size)
-
-# Add oracle
-dj_circuit += const_oracle
-
-# Repeat H-gates
-for qubit in range(input_size):
-    dj_circuit.h(qubit)
-dj_circuit.barrier()
-
-# Measure
-for i in range(input_size):
-    dj_circuit.measure(i, i)
-
+n = 4
+aer_sim = Aer.get_backend('aer_simulator')
+oracle_gate = construct_oracle(n)
+dj_circuit = deutsch_josza_circuit(oracle_gate, n)
 dj_circuit.draw()
 
-aer_sim = Aer.get_backend('aer_simulator')
-qobj = assemble(dj_circuit, aer_sim)
+transpiled_dj_circuit = transpile(dj_circuit, aer_sim)
+qobj = assemble(transpiled_dj_circuit)
 results = aer_sim.run(qobj).result()
 answer = results.get_counts()
-
 plot_histogram(answer)
 
 plt.show()
+
 
