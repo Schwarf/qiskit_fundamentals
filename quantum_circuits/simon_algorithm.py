@@ -5,7 +5,7 @@ from qiskit.providers.ibmq import least_busy
 from qiskit import QuantumCircuit, transpile, assemble
 from qiskit.visualization import plot_histogram
 from qiskit_textbook.tools import simon_oracle
-
+from miscellaneous.misc import dot_product_bit_strings
 
 def simon_circuit(binary_string: str) -> QuantumCircuit:
     n = len(binary_string)
@@ -29,6 +29,9 @@ shots = 1024
 qobj = assemble(simon_circuit, shots=shots)
 results = aer_sim.run(qobj).result()
 counts = results.get_counts()
+for qubits, probability in counts.items():
+    result = dot_product_bit_strings(qubits, binary_string)
+    print(f"Dot product (mod2): {qubits}.{binary_string} = {result}")
 plot_histogram(counts)
 
 plt.show()
