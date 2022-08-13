@@ -7,20 +7,34 @@ from qiskit.providers.ibmq import least_busy
 from qiskit.tools.monitor import job_monitor
 from qiskit.visualization import plot_histogram, plot_bloch_multivector
 
-number_of_qubits = 3
 
-qc = QuantumCircuit(number_of_qubits)
+def rotations_quantum_fourier_trafo(circuit, n):
+    if n == 0: # Exit function if circuit is empty
+        return circuit
+    n -= 1 # Indexes start from 0
+    circuit.h(n) # Apply the H-gate to the most significant qubit
+    for qubit in range(n):
+        # For each less significant qubit, we need to do a
+        # smaller-angled controlled rotation:
+        rotation_angle = pi/2**(n-qubit)
+        circuit.cp(rotation_angle, qubit, n)
+    rotations_quantum_fourier_trafo(circuit, n)
 
-qc.h(2)
-qc.cp(pi/2, 1, 2) # CROT from qubit 1 to qubit 2
-qc.cp(pi/4, 0, 2) # CROT from qubit 2 to qubit 0
 
-qc.h(1)
-qc.cp(pi/2, 0, 1) # CROT from qubit 0 to qubit 1
-qc.h(0)
+def swap_registers(circuit, n):
+    for qubit in range(n//2):
+        circuit.swap(qubit, n-qubit-1)
+    return circuit
 
-qc.swap(0,2)
-qc.draw()
 
+def quantum_fourier_trafo(circuit, n):
+    """QFT on the first n qubits in circuit"""
+    rotations_quantum_fourier_trafo(circuit, n)
+    swap_registers(circuit, n)
+    return circuit
+
+qc2 = QuantumCircuit(4)
+quantum_fourier_trafo(qc2,4)
+qc2.draw()
 
 plt.show()
